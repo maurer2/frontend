@@ -1,0 +1,128 @@
+.gallery {
+  margin: auto;
+  padding: 15px;
+  border: 1px solid black;
+  max-width: 750px;
+  color: inherit #fff;
+}
+
+  .gallery_header {
+    display: flex;
+    flex-direction: row;
+    color: gray inherit;
+    flex-wrap: wrap;
+
+    @media screen and (min-width: 480px) {
+      flex-wrap: nowrap;
+      align-items: center;
+    }
+  }
+
+    .gallery_title {
+      flex-grow: 1;
+      flex-shrink: 1;
+      flex-basis: 100%;
+      text-align: center;
+
+      @media screen and (min-width: 480px) {
+        padding-left: 15px;
+        padding-right: 15px;
+        order: 0;
+      }
+    }
+
+    .gallery_prev,
+    .gallery_next {
+      flex-grow: 1;
+      flex-shrink: 1;
+      flex-basis: 0%;
+      color: black inherit;
+    }
+
+  .gallery_slides {
+    position: relative;
+    display: flex;
+    margin: 15px 0;
+    padding: 0;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    list-style: none;
+    overflow: hidden;
+  }
+
+    .gallery_slide {
+      display: none;
+      flex: 1;
+      box-sizing: border-box;
+
+      transition: transform 500ms ease-in-out;
+      //transition: transform 500ms ease-out;
+      will-change: transform;
+      background: #c3c3c3;
+
+      /*
+      &:nth-child(1) {
+        background: pink;
+      }
+
+      &:nth-child(2) {
+        background: blue;
+      }
+
+      &:nth-child(3) {
+        background: brown;
+      }
+
+      &:nth-child(4) {
+        background: pink;
+      }
+
+      &:nth-child(5) {
+        background: yellow;
+      }
+      */
+    }
+
+    .gallery_slide--is-current {
+      display: block;
+      flex-shrink: 0;
+      flex-basis: 100%;
+      transform: translateY(0%);
+    }
+
+    .gallery_slide--is-following {
+      position: absolute;
+      left: 0;
+      right: 0;
+      display: block;
+    }
+
+    .gallery_slide--is-out-of-left-bound {
+      transform: translateX(-100%);
+    }
+
+    .gallery_slide--is-out-of-right-bound {
+      transform: translateX(100%);
+    }
+
+    .gallery_slide--breaker {
+      flex: none;
+      width: 100%;
+    }
+
+  .gallery_counter {
+    text-align: center;
+  }
+
+    .gallery_counter-current {
+
+    }
+
+    .gallery_counter-seperator {
+
+    }
+
+    .gallery_counter-total {
+
+    }
+
