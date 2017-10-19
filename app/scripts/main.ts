@@ -1,6 +1,6 @@
 enum Direction {
-    next,
-    previous,
+    next = 'left',
+    previous = 'right',
 }
 
 class BaseGallery {
@@ -12,8 +12,8 @@ class BaseGallery {
     public constructor(private domNode: HTMLElement) {
         const slidesList = this.domNode.querySelectorAll('.gallery_slide') as NodeListOf<HTMLElement>;
         this.slides = Array.prototype.slice.call(slidesList);
-        this.linkNextSlide = this.domNode.querySelectorAll('.gallery_next').item(0) as HTMLLinkElement;
-        this.linkPreviousSlide = this.domNode.querySelectorAll('.gallery_prev').item(0) as HTMLLinkElement;
+        this.linkNextSlide = this.domNode.querySelector('.gallery_next') as HTMLLinkElement;
+        this.linkPreviousSlide = this.domNode.querySelector('.gallery_prev') as HTMLLinkElement;
         this.counter = this.domNode.querySelector('.gallery_counter') as HTMLElement;
 
         this.updateCounter();
@@ -25,18 +25,14 @@ class BaseGallery {
         this.linkPreviousSlide.addEventListener('click', (event: Event) => this.switchSlides(Direction.previous));
     }
 
-    private switchSlides(direction: Direction = Direction.next): void {
+    private switchSlides(direction = Direction.next): void {
         const activeSlide: HTMLElement = this.slides.find((element: HTMLElement) => {
             return element.classList.contains('gallery_slide--is-current');
         });
         let newSlide: HTMLElement = this.slides[this.slides.indexOf(activeSlide) + 1];
-        let newSlideDirectionClass: string = 'gallery_slide--is-out-of-right-bound';
-        let activeSlideDirectionClass: string = 'gallery_slide--is-out-of-left-bound';
 
         if (direction === Direction.previous) {
             newSlide = this.slides[this.slides.indexOf(activeSlide) - 1];
-            newSlideDirectionClass = 'gallery_slide--is-out-of-left-bound';
-            activeSlideDirectionClass = 'gallery_slide--is-out-of-right-bound';
         }
 
         if (newSlide === undefined) {
@@ -44,14 +40,17 @@ class BaseGallery {
         }
 
         // step 1
-        newSlide.classList.add('gallery_slide--is-following', newSlideDirectionClass);
+        newSlide.classList.add('gallery_slide--is-following');
+        newSlide.classList.add(direction === Direction.next ?
+        'gallery_slide--is-out-of-right-bound' : 'gallery_slide--is-out-of-left-bound');
 
         // Force reflow to stop browsers combining step 1 and step 2
         this.domNode.getBoundingClientRect();
 
         // step 2
-        activeSlide.classList.add(activeSlideDirectionClass);
-        newSlide.classList.remove(newSlideDirectionClass);
+        activeSlide.classList.add(direction === Direction.next ?
+            'gallery_slide--is-out-of-left-bound' : 'gallery_slide--is-out-of-right-bound');
+        newSlide.classList.remove('gallery_slide--is-out-of-left-bound', 'gallery_slide--is-out-of-right-bound');
 
         // step 3
         activeSlide.parentElement.addEventListener('transitionend', (event: TransitionEvent) => {
@@ -65,7 +64,8 @@ class BaseGallery {
 
             newSlide.classList.add('gallery_slide--is-current');
             newSlide.classList.remove('gallery_slide--is-following');
-            activeSlide.classList.remove('gallery_slide--is-current', activeSlideDirectionClass);
+            activeSlide.classList.remove('gallery_slide--is-current',
+            'gallery_slide--is-out-of-left-bound', 'gallery_slide--is-out-of-right-bound');
 
             // step 4
             this.updateCounter();
