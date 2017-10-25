@@ -59,28 +59,6 @@
       //transition: transform 500ms ease-out;
       will-change: transform;
       background: #c3c3c3;
-
-      /*
-      &:nth-child(1) {
-        background: pink;
-      }
-
-      &:nth-child(2) {
-        background: blue;
-      }
-
-      &:nth-child(3) {
-        background: brown;
-      }
-
-      &:nth-child(4) {
-        background: pink;
-      }
-
-      &:nth-child(5) {
-        background: yellow;
-      }
-      */
     }
 
     .gallery_slide--is-current {

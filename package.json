@@ -5,8 +5,11 @@
   },
   "devDependencies": {
     "babel-core": "^6.4.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-es2015": "^6.3.13",
+    "babelify": "^7.3.0",
     "browser-sync": "^2.2.1",
+    "browserify": "^14.5.0",
     "cssnext": "^1.8.4",
     "del": "^1.1.1",
     "gulp": "^3.9.0",
@@ -30,6 +33,8 @@
     "postcss-load-plugins": "^2.3.0",
     "postcss-short-color": "^3.0.0",
     "postcss-strip-inline-comments": "^0.1.5",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0",
     "wiredep": "^2.2.2"
   },
   "eslintConfig": {
@@ -37,6 +42,10 @@
       "es6": true,
       "node": true,
       "browser": true
+    },
+    "parserOptions": {
+      "ecmaVersion": 6,
+      "sourceType": "module"
     },
     "rules": {
       "quotes": [
@@ -47,10 +56,12 @@
   },
   "dependencies": {
     "babel-polyfill": "^6.26.0",
+    "core-js": "^2.5.1",
     "gulp-typescript": "^3.2.2",
     "postcss": "^6.0.13",
     "postcss-cssnext": "^3.0.2",
     "postcss-import": "^11.0.0",
+    "tsify": "^3.0.3",
     "typescript": "^2.5.3"
   }
 }
