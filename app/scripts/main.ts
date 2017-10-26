@@ -52,7 +52,7 @@ class BaseGallery {
         this.linkPreviousSlide = this.domNode.querySelector('.gallery_prev') as HTMLLinkElement;
         this.counter = this.domNode.querySelector('.gallery_counter') as HTMLElement;
 
-        //this.updateCounter();
+        this.updateCounter();
         this.registerEvents();
     }
 
