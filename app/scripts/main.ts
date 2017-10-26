@@ -58,21 +58,21 @@ class BaseGallery {
 
     private registerEvents(): void {
         this.linkNextSlide.addEventListener('click', (event: Event) => {
-            this.switchSlides(Direction.next, Direction.previous);
+            this.switchSlides(BaseGallery.directionStrings);
         });
         this.linkPreviousSlide.addEventListener('click', (event: Event) => {
-            this.switchSlides(Direction.previous, Direction.next);
+            this.switchSlides(BaseGallery.directionStrings.slice().reverse());
         });
     }
 
-    private switchSlides(directionNewSlide: Direction, directionCurrentSlide: Direction): void {
+    private switchSlides(directions: Array<Direction>): void {
+        const [directionNewSlide, directionCurrentSlide] = directions;
         const activeSlide: Slide = this.slides.find((slide) => slide.isCurrent());
         let newSlide: Slide = this.slides[activeSlide.getIndex() + 1];
 
         if (directionNewSlide === Direction.previous) {
             newSlide = this.slides[activeSlide.getIndex() - 1];
         }
-
 
         if (newSlide === undefined) {
             return;
