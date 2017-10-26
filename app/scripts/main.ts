@@ -25,10 +25,18 @@ class Slide {
     public getIndex(): number {
         return this.index;
     }
+
+    public getHeight(excludeMargin: boolean = false): number {
+        const marginTop: number = parseInt(window.getComputedStyle(this.domElement).marginTop, 10);
+        const marginBottom: number = parseInt(window.getComputedStyle(this.domElement).marginBottom, 10);
+        const innerHeight = this.domElement.clientHeight;
+
+        return excludeMargin ? innerHeight : innerHeight + marginTop + marginBottom;
+    }
 }
 
 class BaseGallery {
-    // private slides: Array<HTMLElement>;
+    private static directionStrings: Array<Direction> = [Direction.next, Direction.previous];
     private slides: Array<Slide>;
     private linkNextSlide: HTMLLinkElement;
     private linkPreviousSlide: HTMLLinkElement;
@@ -40,8 +48,6 @@ class BaseGallery {
             return new Slide(element, index);
         });
 
-        // this.slides = Array.prototype.slice.call(slidesList);
-        // this.slides = Array.from(slidesList);
         this.linkNextSlide = this.domNode.querySelector('.gallery_next') as HTMLLinkElement;
         this.linkPreviousSlide = this.domNode.querySelector('.gallery_prev') as HTMLLinkElement;
         this.counter = this.domNode.querySelector('.gallery_counter') as HTMLElement;
@@ -51,20 +57,20 @@ class BaseGallery {
     }
 
     private registerEvents(): void {
-        this.linkNextSlide.addEventListener('click', (event: Event) => this.switchSlides(Direction.next));
-        this.linkPreviousSlide.addEventListener('click', (event: Event) => this.switchSlides(Direction.previous));
+        this.linkNextSlide.addEventListener('click', (event: Event) => {
+            this.switchSlides(Direction.next, Direction.previous);
+        });
+        this.linkPreviousSlide.addEventListener('click', (event: Event) => {
+            this.switchSlides(Direction.previous, Direction.next);
+        });
     }
 
-    private switchSlides(directionNewSlide = Direction.next): void {
-        const activeSlide: Slide = this.slides.find((slide) => {
-            return slide.isCurrent();
-        });
+    private switchSlides(directionNewSlide: Direction, directionCurrentSlide: Direction): void {
+        const activeSlide: Slide = this.slides.find((slide) => slide.isCurrent());
         let newSlide: Slide = this.slides[activeSlide.getIndex() + 1];
-        let directionCurrentSlide = Direction.previous;
 
         if (directionNewSlide === Direction.previous) {
             newSlide = this.slides[activeSlide.getIndex() - 1];
-            directionCurrentSlide = Direction.next;
         }
 
         if (newSlide === undefined) {
@@ -72,8 +78,8 @@ class BaseGallery {
         }
 
         // step 1
-        newSlide.domElement.classList.add(
-            'gallery_slide--is-following', `gallery_slide--is-out-of-${directionNewSlide}-bound`);
+        newSlide.domElement.classList.add('gallery_slide--is-following');
+        newSlide.domElement.classList.add(`gallery_slide--is-out-of-${directionNewSlide}-bound`);
 
         // Force reflow to stop browsers combining step 1 and step 2
         this.domNode.getBoundingClientRect();
