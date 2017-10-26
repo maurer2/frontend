@@ -52,7 +52,7 @@ class BaseGallery {
         this.linkPreviousSlide = this.domNode.querySelector('.gallery_prev') as HTMLLinkElement;
         this.counter = this.domNode.querySelector('.gallery_counter') as HTMLElement;
 
-        this.updateCounter();
+        //this.updateCounter();
         this.registerEvents();
     }
 
@@ -72,6 +72,7 @@ class BaseGallery {
         if (directionNewSlide === Direction.previous) {
             newSlide = this.slides[activeSlide.getIndex() - 1];
         }
+
 
         if (newSlide === undefined) {
             return;
