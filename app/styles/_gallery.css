@@ -23,12 +23,6 @@
       flex-shrink: 1;
       flex-basis: 100%;
       text-align: center;
-
-      @media screen and (min-width: 480px) {
-        padding-left: 15px;
-        padding-right: 15px;
-        order: 0;
-      }
     }
 
     .gallery_prev,
@@ -37,6 +31,19 @@
       flex-shrink: 1;
       flex-basis: 0%;
       color: black inherit;
+      border: 1px solid gray;
+    }
+
+    .gallery_prev {
+      margin-right: 10px;
+
+      @media screen and (min-width: 480px) {
+        order: -1;
+      }
+    }
+
+    .gallery_next {
+      margin-left: 10px;
     }
 
   .gallery_slides {
