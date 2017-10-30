@@ -1,4 +1,4 @@
-enum Direction {
+enum direction {
     next = 'right',
     previous = 'left',
 }
@@ -12,31 +12,29 @@ class Slide {
 
     public isLast(): boolean {
         const nextSibling = this.domElement.nextElementSibling as HTMLElement;
-
-        return (nextSibling === null);
+        return nextSibling === null;
     }
 
     public isFirst(): boolean {
         const previousSibling = this.domElement.previousElementSibling as HTMLElement;
-
-        return (previousSibling === null);
+        return previousSibling === null;
     }
 
     public getIndex(): number {
         return this.index;
     }
 
-    public getHeight(excludeMargin: boolean = false): number {
+    public getHeight(excludeMargins: boolean = false): number {
         const marginTop: number = parseInt(window.getComputedStyle(this.domElement).marginTop, 10);
         const marginBottom: number = parseInt(window.getComputedStyle(this.domElement).marginBottom, 10);
         const innerHeight = this.domElement.clientHeight;
 
-        return excludeMargin ? innerHeight : innerHeight + marginTop + marginBottom;
+        return excludeMargins ? innerHeight : innerHeight + marginTop + marginBottom;
     }
 }
 
 class BaseGallery {
-    private static directionStrings: Array<Direction> = [Direction.next, Direction.previous];
+    private static directionStrings: Array<direction> = [direction.next, direction.previous];
     private slides: Array<Slide>;
     private linkNextSlide: HTMLLinkElement;
     private linkPreviousSlide: HTMLLinkElement;
@@ -52,7 +50,7 @@ class BaseGallery {
         this.linkPreviousSlide = this.domNode.querySelector('.gallery_prev') as HTMLLinkElement;
         this.counter = this.domNode.querySelector('.gallery_counter') as HTMLElement;
 
-        this.updateCounter();
+        // this.updateCounter();
         this.registerEvents();
     }
 
@@ -68,27 +66,27 @@ class BaseGallery {
 
     private slideNext(): void {
         const activeSlide: Slide = this.slides.find((slide) => slide.isCurrent());
+        const newSlide: Slide = this.slides[activeSlide.getIndex() + 1];
 
         if (activeSlide.isLast()) {
             return;
         }
 
-        const newSlide: Slide = this.slides[activeSlide.getIndex() + 1];
         this.switchSlides(activeSlide, newSlide, BaseGallery.directionStrings);
     }
 
     private slidePrevious(): void {
         const activeSlide: Slide = this.slides.find((slide) => slide.isCurrent());
+        const newSlide: Slide = this.slides[activeSlide.getIndex() - 1];
 
         if (activeSlide.isFirst()) {
             return;
         }
 
-        const newSlide: Slide = this.slides[activeSlide.getIndex() - 1];
         this.switchSlides(activeSlide, newSlide, BaseGallery.directionStrings.slice().reverse());
     }
 
-    private switchSlides(activeSlide: Slide, newSlide: Slide, directions: Array<Direction>): void {
+    private switchSlides(activeSlide: Slide, newSlide: Slide, directions: Array<direction>): void {
         const [directionNewSlide, directionCurrentSlide] = directions;
 
         // step 1
@@ -108,16 +106,20 @@ class BaseGallery {
             const transitionSource = event.srcElement as HTMLElement;
 
             // ignore other event types and transtion-events from within each slide
-            // if (transitionProperty !== 'transform' && this.slides.indexOf(transitionSource) === -1) {
-            //    return;
-            // }
+            if (transitionProperty !== 'transform' && transitionSource !== activeSlide.domElement) {
+                return;
+            }
 
+            // stop transition-event bubbling up
+            event.stopPropagation();
+
+            // step 4
             newSlide.domElement.classList.add('gallery_slide--is-current');
             newSlide.domElement.classList.remove('gallery_slide--is-following');
             activeSlide.domElement.classList.remove('gallery_slide--is-current');
             activeSlide.domElement.classList.remove(`gallery_slide--is-out-of-${directionCurrentSlide}-bound`);
 
-            // step 4
+            // step 5
             this.updateCounter();
         });
     }
