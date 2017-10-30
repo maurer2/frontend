@@ -58,25 +58,38 @@ class BaseGallery {
 
     private registerEvents(): void {
         this.linkNextSlide.addEventListener('click', (event: Event) => {
-            this.switchSlides(BaseGallery.directionStrings);
+            this.slideNext();
         });
+
         this.linkPreviousSlide.addEventListener('click', (event: Event) => {
-            this.switchSlides(BaseGallery.directionStrings.slice().reverse());
+            this.slidePrevious();
         });
     }
 
-    private switchSlides(directions: Array<Direction>): void {
-        const [directionNewSlide, directionCurrentSlide] = directions;
+    private slideNext(): void {
         const activeSlide: Slide = this.slides.find((slide) => slide.isCurrent());
-        let newSlide: Slide = this.slides[activeSlide.getIndex() + 1];
 
-        if (directionNewSlide === Direction.previous) {
-            newSlide = this.slides[activeSlide.getIndex() - 1];
-        }
-
-        if (newSlide === undefined) {
+        if (activeSlide.isLast()) {
             return;
         }
+
+        const newSlide: Slide = this.slides[activeSlide.getIndex() + 1];
+        this.switchSlides(activeSlide, newSlide, BaseGallery.directionStrings);
+    }
+
+    private slidePrevious(): void {
+        const activeSlide: Slide = this.slides.find((slide) => slide.isCurrent());
+
+        if (activeSlide.isFirst()) {
+            return;
+        }
+
+        const newSlide: Slide = this.slides[activeSlide.getIndex() - 1];
+        this.switchSlides(activeSlide, newSlide, BaseGallery.directionStrings.slice().reverse());
+    }
+
+    private switchSlides(activeSlide: Slide, newSlide: Slide, directions: Array<Direction>): void {
+        const [directionNewSlide, directionCurrentSlide] = directions;
 
         // step 1
         newSlide.domElement.classList.add('gallery_slide--is-following');
