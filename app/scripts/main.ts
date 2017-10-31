@@ -39,6 +39,7 @@ class BaseGallery {
     private linkNextSlide: HTMLLinkElement;
     private linkPreviousSlide: HTMLLinkElement;
     private navEntries: Array<HTMLElement>;
+    private interval: number;
 
     public constructor(private domNode: HTMLElement) {
         const slidesList = this.domNode.querySelectorAll('.gallery_slide') as NodeListOf<HTMLElement>;
@@ -49,7 +50,6 @@ class BaseGallery {
         this.linkNextSlide = this.domNode.querySelector('.gallery_next') as HTMLLinkElement;
         this.linkPreviousSlide = this.domNode.querySelector('.gallery_prev') as HTMLLinkElement;
 
-        // this.updateCounter();
         this.registerEvents();
     }
 
@@ -123,29 +123,26 @@ class BaseGallery {
         });
     }
 
+    private initAutoslide(): void {
+        this.interval = window.setInterval(() => {
+            // todo
+        });
+    }
+
+    private cancelAutoSlide(): void {
+        window.clearInterval(this.interval);
+    }
+
     private updateCounter(): void {
         const activeSlide = this.slides.find((slide) => slide.isCurrent());
         const inactiveSlides = this.slides.filter((slide) => !slide.isCurrent());
+        const activeNavEntry = this.navEntries.find((element, index) => index === activeSlide.getIndex());
+        const inactiveNavEntries = this.navEntries.filter((element, index) => index !== activeSlide.getIndex());
 
-        const activeNavigationEntry = this.navEntries.find((element, index) => {
-            return index === activeSlide.getIndex();
-        });
-        const inactiveNavigationEntries = this.navEntries.filter((element, index) => {
-            return index !== activeSlide.getIndex();
-        });
-
-        activeNavigationEntry.classList.add('gallery_nav-entry--is-current');
-        inactiveNavigationEntries.forEach((element) => {
+        activeNavEntry.classList.add('gallery_nav-entry--is-current');
+        inactiveNavEntries.forEach((element) => {
             element.classList.remove('gallery_nav-entry--is-current');
         });
-
-        /*
-        this.counter.innerHTML = `
-            <span class="gallery_counter-current">${currentSlideIndex + 1}</span>
-                <span class="gallery_counter-seperator">/</span>
-            <span class="gallery_counter-total">${this.slides.length}</span>
-        `;
-        */
     }
 }
 
