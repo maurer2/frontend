@@ -38,17 +38,16 @@ class BaseGallery {
     private slides: Array<Slide>;
     private linkNextSlide: HTMLLinkElement;
     private linkPreviousSlide: HTMLLinkElement;
-    private counter: HTMLElement;
+    private navEntries: Array<HTMLElement>;
 
     public constructor(private domNode: HTMLElement) {
         const slidesList = this.domNode.querySelectorAll('.gallery_slide') as NodeListOf<HTMLElement>;
-        this.slides = Array.prototype.map.call(slidesList, (element, index) => {
-            return new Slide(element, index);
-        });
+        const navEntries = this.domNode.querySelectorAll('.gallery_nav-entry') as NodeListOf<HTMLElement>;
 
+        this.slides = Array.prototype.map.call(slidesList, (element, index) => new Slide(element, index));
+        this.navEntries = Array.prototype.map.call(navEntries, (element) => element);
         this.linkNextSlide = this.domNode.querySelector('.gallery_next') as HTMLLinkElement;
         this.linkPreviousSlide = this.domNode.querySelector('.gallery_prev') as HTMLLinkElement;
-        this.counter = this.domNode.querySelector('.gallery_counter') as HTMLElement;
 
         // this.updateCounter();
         this.registerEvents();
@@ -125,10 +124,22 @@ class BaseGallery {
     }
 
     private updateCounter(): void {
-        /*
-        const currentSlideIndex: number = this.slides.findIndex((element: HTMLElement) => {
-            return element.classList.contains('gallery_slide--is-current');
+        const activeSlide = this.slides.find((slide) => slide.isCurrent());
+        const inactiveSlides = this.slides.filter((slide) => !slide.isCurrent());
+
+        const activeNavigationEntry = this.navEntries.find((element, index) => {
+            return index === activeSlide.getIndex();
         });
+        const inactiveNavigationEntries = this.navEntries.filter((element, index) => {
+            return index !== activeSlide.getIndex();
+        });
+
+        activeNavigationEntry.classList.add('gallery_nav-entry--is-current');
+        inactiveNavigationEntries.forEach((element) => {
+            element.classList.remove('gallery_nav-entry--is-current');
+        });
+
+        /*
         this.counter.innerHTML = `
             <span class="gallery_counter-current">${currentSlideIndex + 1}</span>
                 <span class="gallery_counter-seperator">/</span>

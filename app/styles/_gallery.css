@@ -23,6 +23,7 @@
       flex-shrink: 1;
       flex-basis: 100%;
       text-align: center;
+      font-size: 1.75rem;
     }
 
     .gallery_prev,
@@ -61,11 +62,9 @@
       display: none;
       flex: 1;
       box-sizing: border-box;
-
-      transition: transform 500ms ease-in-out;
-      //transition: transform 500ms ease-out;
-      will-change: transform;
       background: #c3c3c3;
+      transition: transform 500ms ease-in-out;
+      will-change: transform;
     }
 
     .gallery_slide--is-current {
@@ -95,19 +94,25 @@
       width: 100%;
     }
 
-  .gallery_counter {
-    text-align: center;
+  .gallery_nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
-    .gallery_counter-current {
+    .gallery_nav-entry {
+      padding: 0;
+      border: 0;
+      background: none;
+      font-size: 1rem;
+      color: #c5c5c5 inherit;
+      transition: font-size 500ms ease-in-out;
 
+      &:before {
+        content: '\25CF';
+      }
     }
 
-    .gallery_counter-seperator {
-
+    .gallery_nav-entry--is-current {
+      color: black;
     }
-
-    .gallery_counter-total {
-
-    }
-
