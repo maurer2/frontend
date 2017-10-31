@@ -36,6 +36,7 @@ class Slide {
 class BaseGallery {
     private static directionStrings: Array<direction> = [direction.next, direction.previous];
     private slides: Array<Slide>;
+    private slidesContainer: HTMLElement;
     private linkNextSlide: HTMLLinkElement;
     private linkPreviousSlide: HTMLLinkElement;
     private navEntries: Array<HTMLElement>;
@@ -47,6 +48,7 @@ class BaseGallery {
 
         this.slides = Array.prototype.map.call(slidesList, (element, index) => new Slide(element, index));
         this.navEntries = Array.prototype.map.call(navEntries, (element) => element);
+        this.slidesContainer = this.domNode.querySelector('.gallery_slides') as HTMLElement;
         this.linkNextSlide = this.domNode.querySelector('.gallery_next') as HTMLLinkElement;
         this.linkPreviousSlide = this.domNode.querySelector('.gallery_prev') as HTMLLinkElement;
 
@@ -61,6 +63,18 @@ class BaseGallery {
         this.linkPreviousSlide.addEventListener('click', (event: Event) => {
             this.slidePrevious();
         });
+    }
+
+    private adjustHeight(activeSlide: Slide, newSlide: Slide): void {
+        const currentHeight: number = activeSlide.getHeight();
+        const newHeight: number = newSlide.getHeight();
+        const slideDuration: number = parseFloat(window.getComputedStyle(activeSlide.domElement)
+        .getPropertyValue('transition-duration')) * 1000 || 500;
+
+        this.slidesContainer.style.height = currentHeight + 'px';
+        window.setTimeout(() => {
+            this.slidesContainer.style.height = newHeight + 'px';
+        }, slideDuration);
     }
 
     private slideNext(): void {
@@ -92,6 +106,9 @@ class BaseGallery {
         newSlide.domElement.classList.add('gallery_slide--is-following');
         newSlide.domElement.classList.add(`gallery_slide--is-out-of-${directionNewSlide}-bound`);
 
+        // step 1.5
+        this.adjustHeight(activeSlide, newSlide);
+
         // Force reflow to stop browsers combining step 1 and step 2
         this.domNode.getBoundingClientRect();
 
@@ -100,7 +117,7 @@ class BaseGallery {
         newSlide.domElement.classList.remove(`gallery_slide--is-out-of-${directionNewSlide}-bound`);
 
         // step 3
-        activeSlide.domElement.parentElement.addEventListener('transitionend', (event: TransitionEvent) => {
+        this.slidesContainer.addEventListener('transitionend', (event: TransitionEvent) => {
             const transitionProperty = event.propertyName;
             const transitionSource = event.srcElement as HTMLElement;
 
