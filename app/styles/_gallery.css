@@ -56,16 +56,16 @@
     flex-direction: row;
     list-style: none;
     overflow: hidden;
-    transition: height 0.5s ease-out;
+    transition: height 0.5s ease-in-out;
   }
 
     .gallery_slide {
       display: none;
       flex: 1;
       box-sizing: border-box;
-      background: #c3c3c3;
       transition: transform 500ms ease-in-out;
       will-change: transform;
+      transform: translateY(0%);
     }
 
     .gallery_slide--is-current {

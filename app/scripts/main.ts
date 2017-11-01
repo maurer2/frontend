@@ -28,6 +28,7 @@ class Slide {
         const marginTop: number = parseInt(window.getComputedStyle(this.domElement).marginTop, 10);
         const marginBottom: number = parseInt(window.getComputedStyle(this.domElement).marginBottom, 10);
         const innerHeight = this.domElement.clientHeight;
+        console.log(innerHeight);
 
         return excludeMargins ? innerHeight : innerHeight + marginTop + marginBottom;
     }
