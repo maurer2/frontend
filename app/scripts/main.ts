@@ -28,7 +28,6 @@ class Slide {
         const marginTop: number = parseInt(window.getComputedStyle(this.domElement).marginTop, 10);
         const marginBottom: number = parseInt(window.getComputedStyle(this.domElement).marginBottom, 10);
         const innerHeight = this.domElement.clientHeight;
-        console.log(innerHeight);
 
         return excludeMargins ? innerHeight : innerHeight + marginTop + marginBottom;
     }
@@ -54,6 +53,7 @@ class BaseGallery {
         this.linkPreviousSlide = this.domNode.querySelector('.gallery_prev') as HTMLLinkElement;
 
         this.registerEvents();
+        this.initAutoslide();
     }
 
     private registerEvents(): void {
@@ -63,6 +63,10 @@ class BaseGallery {
 
         this.linkPreviousSlide.addEventListener('click', (event: Event) => {
             this.slidePrevious();
+        });
+
+        this.domNode.addEventListener('mouseover', (event: MouseEvent) => {
+            this.cancelAutoSlide();
         });
     }
 
@@ -131,10 +135,12 @@ class BaseGallery {
             event.stopPropagation();
 
             // step 4
-            newSlide.domElement.classList.add('gallery_slide--is-current');
-            newSlide.domElement.classList.remove('gallery_slide--is-following');
-            activeSlide.domElement.classList.remove('gallery_slide--is-current');
-            activeSlide.domElement.classList.remove(`gallery_slide--is-out-of-${directionCurrentSlide}-bound`);
+            newSlide.domElement.className = 'gallery_slide gallery_slide--is-current';
+            activeSlide.domElement.className = 'gallery_slide';
+            // newSlide.domElement.classList.add('gallery_slide--is-current');
+            // newSlide.domElement.classList.remove('gallery_slide--is-following');
+            // activeSlide.domElement.classList.remove('gallery_slide--is-current');
+            // activeSlide.domElement.classList.remove(`gallery_slide--is-out-of-${directionCurrentSlide}-bound`);
 
             // step 5
             this.updateCounter();
@@ -143,11 +149,12 @@ class BaseGallery {
 
     private initAutoslide(): void {
         this.interval = window.setInterval(() => {
-            // todo
-        });
+            this.slideNext();
+        }, 5000);
     }
 
     private cancelAutoSlide(): void {
+        console.log('cancel autolog');
         window.clearInterval(this.interval);
     }
 

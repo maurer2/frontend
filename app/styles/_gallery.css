@@ -63,9 +63,10 @@
       display: none;
       flex: 1;
       box-sizing: border-box;
+      transform: translateY(0%);
       transition: transform 500ms ease-in-out;
       will-change: transform;
-      transform: translateY(0%);
+      background: black;
     }
 
     .gallery_slide--is-current {
