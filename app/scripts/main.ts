@@ -40,7 +40,7 @@ class BaseGallery {
     private linkNextSlide: HTMLLinkElement;
     private linkPreviousSlide: HTMLLinkElement;
     private navEntries: Array<HTMLElement>;
-    private interval: number;
+    private slideInterval: number;
 
     public constructor(private domNode: HTMLElement) {
         const slidesList = this.domNode.querySelectorAll('.gallery_slide') as NodeListOf<HTMLElement>;
@@ -53,20 +53,21 @@ class BaseGallery {
         this.linkPreviousSlide = this.domNode.querySelector('.gallery_prev') as HTMLLinkElement;
 
         this.registerEvents();
-        this.initAutoslide();
+        this.enableAutoslide();
     }
 
     private registerEvents(): void {
         this.linkNextSlide.addEventListener('click', (event: Event) => {
             this.slideNext();
         });
-
         this.linkPreviousSlide.addEventListener('click', (event: Event) => {
             this.slidePrevious();
         });
-
-        this.domNode.addEventListener('mouseover', (event: MouseEvent) => {
+        this.domNode.addEventListener('mouseenter', (event: MouseEvent) => {
             this.cancelAutoSlide();
+        });
+        this.domNode.addEventListener('mouseleave', (event: MouseEvent) => {
+            this.enableAutoslide();
         });
     }
 
@@ -147,15 +148,14 @@ class BaseGallery {
         });
     }
 
-    private initAutoslide(): void {
-        this.interval = window.setInterval(() => {
+    private enableAutoslide(): void {
+        this.slideInterval = window.setInterval(() => {
             this.slideNext();
         }, 5000);
     }
 
     private cancelAutoSlide(): void {
-        console.log('cancel autolog');
-        window.clearInterval(this.interval);
+        window.clearInterval(this.slideInterval);
     }
 
     private updateCounter(): void {
