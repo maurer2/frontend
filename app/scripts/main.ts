@@ -42,7 +42,7 @@ class BaseGallery {
     private navEntries: Array<HTMLElement>;
     private slideInterval: number;
 
-    public constructor(private domNode: HTMLElement) {
+    public constructor(protected domNode: HTMLElement) {
         const slidesList = this.domNode.querySelectorAll('.gallery_slide') as NodeListOf<HTMLElement>;
         const navEntries = this.domNode.querySelectorAll('.gallery_nav-entry') as NodeListOf<HTMLElement>;
 
@@ -53,7 +53,58 @@ class BaseGallery {
         this.linkPreviousSlide = this.domNode.querySelector('.gallery_prev') as HTMLLinkElement;
 
         this.registerEvents();
-        this.enableAutoslide();
+        // this.enableAutoslide();
+    }
+
+    protected switchSlides(activeSlide: Slide, newSlide: Slide, directions: Array<direction>): void {
+        const [directionNewSlide, directionCurrentSlide] = directions;
+
+        // step 1
+        newSlide.domElement.classList.add('gallery_slide--is-following');
+        newSlide.domElement.classList.add(`gallery_slide--is-out-of-${directionNewSlide}-bound`);
+
+        // step 1.5
+        this.adjustHeight(activeSlide, newSlide);
+
+        // Force reflow to stop browsers combining step 1 and step 2
+        this.domNode.getBoundingClientRect();
+
+        // step 2
+        activeSlide.domElement.classList.add(`gallery_slide--is-out-of-${directionCurrentSlide}-bound`);
+        newSlide.domElement.classList.remove(`gallery_slide--is-out-of-${directionNewSlide}-bound`);
+
+        // step 3
+        this.slidesContainer.addEventListener('transitionend', (event: TransitionEvent) => {
+            const transitionProperty = event.propertyName;
+            const transitionSource = event.srcElement as HTMLElement;
+
+            // ignore other event types and transtion-events from within each slide
+            if (transitionProperty !== 'transform' && transitionSource !== activeSlide.domElement) {
+                return;
+            }
+
+            // stop transition-event bubbling up
+            event.stopPropagation();
+
+            // step 4
+            newSlide.domElement.className = 'gallery_slide gallery_slide--is-current';
+            activeSlide.domElement.className = 'gallery_slide';
+
+            // step 5
+            this.updateCounter();
+        });
+    }
+
+    protected updateCounter(): void {
+        const activeSlide = this.slides.find((slide) => slide.isCurrent());
+        const inactiveSlides = this.slides.filter((slide) => !slide.isCurrent());
+        const activeNavEntry = this.navEntries.find((element, index) => index === activeSlide.getIndex());
+        const inactiveNavEntries = this.navEntries.filter((element, index) => index !== activeSlide.getIndex());
+
+        activeNavEntry.classList.add('gallery_nav-entry--is-current');
+        inactiveNavEntries.forEach((element) => {
+            element.classList.remove('gallery_nav-entry--is-current');
+        });
     }
 
     private registerEvents(): void {
@@ -64,10 +115,10 @@ class BaseGallery {
             this.slidePrevious();
         });
         this.domNode.addEventListener('mouseenter', (event: MouseEvent) => {
-            this.cancelAutoSlide();
+            // this.cancelAutoSlide();
         });
         this.domNode.addEventListener('mouseleave', (event: MouseEvent) => {
-            this.enableAutoslide();
+            // this.enableAutoslide();
         });
     }
 
@@ -105,49 +156,6 @@ class BaseGallery {
         this.switchSlides(activeSlide, newSlide, BaseGallery.directionStrings.slice().reverse());
     }
 
-    private switchSlides(activeSlide: Slide, newSlide: Slide, directions: Array<direction>): void {
-        const [directionNewSlide, directionCurrentSlide] = directions;
-
-        // step 1
-        newSlide.domElement.classList.add('gallery_slide--is-following');
-        newSlide.domElement.classList.add(`gallery_slide--is-out-of-${directionNewSlide}-bound`);
-
-        // step 1.5
-        this.adjustHeight(activeSlide, newSlide);
-
-        // Force reflow to stop browsers combining step 1 and step 2
-        this.domNode.getBoundingClientRect();
-
-        // step 2
-        activeSlide.domElement.classList.add(`gallery_slide--is-out-of-${directionCurrentSlide}-bound`);
-        newSlide.domElement.classList.remove(`gallery_slide--is-out-of-${directionNewSlide}-bound`);
-
-        // step 3
-        this.slidesContainer.addEventListener('transitionend', (event: TransitionEvent) => {
-            const transitionProperty = event.propertyName;
-            const transitionSource = event.srcElement as HTMLElement;
-
-            // ignore other event types and transtion-events from within each slide
-            if (transitionProperty !== 'transform' && transitionSource !== activeSlide.domElement) {
-                return;
-            }
-
-            // stop transition-event bubbling up
-            event.stopPropagation();
-
-            // step 4
-            newSlide.domElement.className = 'gallery_slide gallery_slide--is-current';
-            activeSlide.domElement.className = 'gallery_slide';
-            // newSlide.domElement.classList.add('gallery_slide--is-current');
-            // newSlide.domElement.classList.remove('gallery_slide--is-following');
-            // activeSlide.domElement.classList.remove('gallery_slide--is-current');
-            // activeSlide.domElement.classList.remove(`gallery_slide--is-out-of-${directionCurrentSlide}-bound`);
-
-            // step 5
-            this.updateCounter();
-        });
-    }
-
     private enableAutoslide(): void {
         this.slideInterval = window.setInterval(() => {
             this.slideNext();
@@ -157,18 +165,44 @@ class BaseGallery {
     private cancelAutoSlide(): void {
         window.clearInterval(this.slideInterval);
     }
+}
 
-    private updateCounter(): void {
-        const activeSlide = this.slides.find((slide) => slide.isCurrent());
-        const inactiveSlides = this.slides.filter((slide) => !slide.isCurrent());
-        const activeNavEntry = this.navEntries.find((element, index) => index === activeSlide.getIndex());
-        const inactiveNavEntries = this.navEntries.filter((element, index) => index !== activeSlide.getIndex());
+class WebAnimationGallery extends BaseGallery {
+    public constructor(protected domNode: HTMLElement) {
+        super(domNode);
+    }
 
-        activeNavEntry.classList.add('gallery_nav-entry--is-current');
-        inactiveNavEntries.forEach((element) => {
-            element.classList.remove('gallery_nav-entry--is-current');
-        });
+    protected switchSlides(activeSlide: Slide, newSlide: Slide, directions: Array<direction>): void {
+        if (!('animate' in (activeSlide.domElement as any))) {
+            super.switchSlides(activeSlide, newSlide, directions);
+            return;
+        }
+
+        // step 1
+        newSlide.domElement.classList.add('gallery_slide--is-following');
+
+        // step 2 animate
+        const slideOutActiveSlide: any = (activeSlide.domElement as any).animate([
+            { transform: 'translateX(0%)' },
+            { transform: 'translateX(-100%)' },
+        ], 500);
+        const slideInNewSlide: any = (newSlide.domElement as any).animate([
+            { transform: 'translateX(100%)' },
+            { transform: 'translateX(0%)' },
+        ], 500);
+
+        // step 3 cleanup classes
+        Promise.all([slideOutActiveSlide.finished, slideInNewSlide.finished])
+            .then(() => {
+                console.log('wefew');
+                newSlide.domElement.className = 'gallery_slide gallery_slide--is-current';
+                activeSlide.domElement.className = 'gallery_slide';
+            })
+            .then(() => {
+                this.updateCounter();
+            });
     }
 }
 
 const galleryBase = new BaseGallery(document.querySelector('.gallery--base') as HTMLElement);
+const galleryWebanimation = new WebAnimationGallery(document.querySelector('.gallery--webanimation') as HTMLElement);
