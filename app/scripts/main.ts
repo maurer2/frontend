@@ -44,7 +44,7 @@ class BaseGallery {
 
     public constructor(protected domNode: HTMLElement) {
         const slidesList = this.domNode.querySelectorAll('.gallery_slide') as NodeListOf<HTMLElement>;
-        const navEntries = this.domNode.querySelectorAll('.gallery_nav-entry') as NodeListOf<HTMLElement>;
+        const navEntries = this.domNode.querySelectorAll('.gallery_nav-entry') as NodeListOf<HTMLButtonElement>;
 
         this.slides = Array.prototype.map.call(slidesList, (element, index) => new Slide(element, index));
         this.navEntries = Array.prototype.map.call(navEntries, (element) => element);
@@ -66,6 +66,11 @@ class BaseGallery {
         });
         this.domNode.addEventListener('mouseleave', (event: MouseEvent) => {
             // this.enableAutoslide();
+        });
+        this.navEntries.forEach((element: HTMLButtonElement, index) => {
+            element.addEventListener('click', (event: MouseEvent) => {
+                this.slideTo(index);
+            });
         });
     }
 
@@ -89,6 +94,17 @@ class BaseGallery {
         }
 
         this.switchSlides(activeSlide, newSlide, BaseGallery.directionStrings.slice().reverse());
+    }
+
+    protected slideTo(slideIndex: number): void {
+        const activeSlide: Slide = this.slides.find((slide) => slide.isCurrent());
+        const newSlide: Slide = this.slides[slideIndex];
+
+        if (newSlide === null || activeSlide.getIndex() === newSlide.getIndex()) {
+            return;
+        }
+
+        this.switchSlides(activeSlide, newSlide, BaseGallery.directionStrings);
     }
 
     protected switchSlides(activeSlide: Slide, newSlide: Slide, directions: Array<direction>): void {
