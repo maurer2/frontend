@@ -53,7 +53,42 @@ class BaseGallery {
         this.linkPreviousSlide = this.domNode.querySelector('.gallery_prev') as HTMLLinkElement;
 
         this.registerEvents();
+        this.updateControls();
         // this.enableAutoslide();
+    }
+
+    protected registerEvents(): void {
+        this.linkNextSlide.addEventListener('click', (event: Event) => this.slideNext());
+        this.linkPreviousSlide.addEventListener('click', (event: Event) => this.slidePrevious());
+
+        this.domNode.addEventListener('mouseenter', (event: MouseEvent) => {
+            // this.cancelAutoSlide();
+        });
+        this.domNode.addEventListener('mouseleave', (event: MouseEvent) => {
+            // this.enableAutoslide();
+        });
+    }
+
+    protected slideNext(): void {
+        const activeSlide: Slide = this.slides.find((slide) => slide.isCurrent());
+        const newSlide: Slide = this.slides[activeSlide.getIndex() + 1];
+
+        if (activeSlide.isLast()) {
+            return;
+        }
+
+        this.switchSlides(activeSlide, newSlide, BaseGallery.directionStrings);
+    }
+
+    protected slidePrevious(): void {
+        const activeSlide: Slide = this.slides.find((slide) => slide.isCurrent());
+        const newSlide: Slide = this.slides[activeSlide.getIndex() - 1];
+
+        if (activeSlide.isFirst()) {
+            return;
+        }
+
+        this.switchSlides(activeSlide, newSlide, BaseGallery.directionStrings.slice().reverse());
     }
 
     protected switchSlides(activeSlide: Slide, newSlide: Slide, directions: Array<direction>): void {
@@ -92,7 +127,32 @@ class BaseGallery {
 
             // step 5
             this.updateCounter();
+
+            // step 6
+            this.updateControls();
         });
+    }
+
+    protected enableAutoslide(): void {
+        this.slideInterval = window.setInterval(() => {
+            this.slideNext();
+        }, 5000);
+    }
+
+    protected cancelAutoSlide(): void {
+        window.clearInterval(this.slideInterval);
+    }
+
+    protected adjustHeight(activeSlide: Slide, newSlide: Slide): void {
+        const currentHeight: number = activeSlide.getHeight();
+        const newHeight: number = newSlide.getHeight();
+        const slideDuration: number = parseFloat(window.getComputedStyle(activeSlide.domElement)
+        .getPropertyValue('transition-duration')) * 1000 || 500;
+
+        this.slidesContainer.style.height = currentHeight + 'px';
+        window.setTimeout(() => {
+            this.slidesContainer.style.height = newHeight + 'px';
+        }, slideDuration);
     }
 
     protected updateCounter(): void {
@@ -107,64 +167,26 @@ class BaseGallery {
         });
     }
 
-    private registerEvents(): void {
-        this.linkNextSlide.addEventListener('click', (event: Event) => {
-            this.slideNext();
-        });
-        this.linkPreviousSlide.addEventListener('click', (event: Event) => {
-            this.slidePrevious();
-        });
-        this.domNode.addEventListener('mouseenter', (event: MouseEvent) => {
-            // this.cancelAutoSlide();
-        });
-        this.domNode.addEventListener('mouseleave', (event: MouseEvent) => {
-            // this.enableAutoslide();
-        });
-    }
-
-    private adjustHeight(activeSlide: Slide, newSlide: Slide): void {
-        const currentHeight: number = activeSlide.getHeight();
-        const newHeight: number = newSlide.getHeight();
-        const slideDuration: number = parseFloat(window.getComputedStyle(activeSlide.domElement)
-        .getPropertyValue('transition-duration')) * 1000 || 500;
-
-        this.slidesContainer.style.height = currentHeight + 'px';
-        window.setTimeout(() => {
-            this.slidesContainer.style.height = newHeight + 'px';
-        }, slideDuration);
-    }
-
-    private slideNext(): void {
-        const activeSlide: Slide = this.slides.find((slide) => slide.isCurrent());
-        const newSlide: Slide = this.slides[activeSlide.getIndex() + 1];
-
-        if (activeSlide.isLast()) {
-            return;
-        }
-
-        this.switchSlides(activeSlide, newSlide, BaseGallery.directionStrings);
-    }
-
-    private slidePrevious(): void {
-        const activeSlide: Slide = this.slides.find((slide) => slide.isCurrent());
-        const newSlide: Slide = this.slides[activeSlide.getIndex() - 1];
+    protected updateControls(): void {
+        const activeSlide = this.slides.find((slide) => slide.isCurrent());
 
         if (activeSlide.isFirst()) {
-            return;
+            this.linkPreviousSlide.classList.add('gallery_prev--is-inactive');
+            this.linkPreviousSlide.disabled = true;
+        } else {
+            this.linkPreviousSlide.classList.remove('gallery_prev--is-inactive');
+            this.linkPreviousSlide.disabled = false;
         }
 
-        this.switchSlides(activeSlide, newSlide, BaseGallery.directionStrings.slice().reverse());
+        if (activeSlide.isLast()) {
+            this.linkNextSlide.classList.add('gallery_next--is-inactive');
+            this.linkNextSlide.disabled = true;
+        } else {
+            this.linkNextSlide.classList.remove('gallery_next--is-inactive');
+            this.linkNextSlide.disabled = false;
+        }
     }
 
-    private enableAutoslide(): void {
-        this.slideInterval = window.setInterval(() => {
-            this.slideNext();
-        }, 5000);
-    }
-
-    private cancelAutoSlide(): void {
-        window.clearInterval(this.slideInterval);
-    }
 }
 
 class WebAnimationGallery extends BaseGallery {

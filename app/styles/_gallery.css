@@ -33,6 +33,7 @@
       flex-basis: 0%;
       color: black inherit;
       border: 1px solid gray;
+      transition: all 250ms ease-in-out;
     }
 
     .gallery_prev {
@@ -45,6 +46,12 @@
 
     .gallery_next {
       margin-left: 10px;
+    }
+
+    .gallery_prev--is-inactive,
+    .gallery_next--is-inactive {
+      color: lightgray inherit;
+      border-color: lightgray;
     }
 
   .gallery_slides {
