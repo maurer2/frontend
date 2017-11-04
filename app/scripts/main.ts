@@ -99,12 +99,17 @@ class BaseGallery {
     protected slideTo(slideIndex: number): void {
         const activeSlide: Slide = this.slides.find((slide) => slide.isCurrent());
         const newSlide: Slide = this.slides[slideIndex];
+        let directionStrings: Array<direction> = BaseGallery.directionStrings;
 
         if (newSlide === null || activeSlide.getIndex() === newSlide.getIndex()) {
             return;
         }
 
-        this.switchSlides(activeSlide, newSlide, BaseGallery.directionStrings);
+        if (activeSlide.getIndex() > newSlide.getIndex()) {
+            directionStrings = BaseGallery.directionStrings.slice().reverse();
+        }
+
+        this.switchSlides(activeSlide, newSlide, directionStrings);
     }
 
     protected switchSlides(activeSlide: Slide, newSlide: Slide, directions: Array<direction>): void {
@@ -232,7 +237,6 @@ class WebAnimationGallery extends BaseGallery {
         // step 3 cleanup classes
         Promise.all([slideOutActiveSlide.finished, slideInNewSlide.finished])
             .then(() => {
-                console.log('wefew');
                 newSlide.domElement.className = 'gallery_slide gallery_slide--is-current';
                 activeSlide.domElement.className = 'gallery_slide';
             })
