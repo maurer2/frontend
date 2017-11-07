@@ -235,6 +235,7 @@ class WebAnimationGallery extends BaseGallery {
         ], 500);
 
         // step 3 cleanup classes
+        // todo Promisify callbacks for chrome
         Promise.all([slideOutActiveSlide.finished, slideInNewSlide.finished])
             .then(() => {
                 newSlide.domElement.className = 'gallery_slide gallery_slide--is-current';
