@@ -247,5 +247,36 @@ class WebAnimationGallery extends BaseGallery {
     }
 }
 
+class CustomPropertiesGallery extends BaseGallery {
+    public constructor(protected domNode: HTMLElement) {
+        super(domNode);
+    }
+
+    protected switchSlides(activeSlide: Slide, newSlide: Slide, directions: Array<direction>): void {
+        // check window.CSS support and css-var support
+        if ((window as any).CSS && CSS.supports('color', 'var(--testvar)')) {
+            // set global vars
+            this.domNode.style.setProperty('--directionCurrentSlideInitial', 'translateX(0%)');
+            this.domNode.style.setProperty('--directionCurrentSlideFinal', 'translateX(-100%)');
+            this.domNode.style.setProperty('--directionNewSlideInitial', 'translateX(100%)');
+            this.domNode.style.setProperty('--directionNewSlideFinal', 'translateX(0%)');
+
+            // step 0
+            // activeSlide.domElement.style.setProperty('transform', 'calc(--directionCurrentSlideInitial)');
+            // newSlide.domElement.style.setProperty('transform', 'calc(--directionNewSlideInitial)');
+
+            // step 1
+            // newSlide.domElement.classList.add('gallery_slide--is-following');
+            // getComputedStyle(activeSlide.domElement).setProperty('--directionCurrentSlideInitial', 'translateX(0%)');
+            // getComputedStyle(newSlide.domElement).setProperty('--directionCurrentSlideInitial', 'translateX(100%)');
+
+            // step 3
+            // todo
+        }
+    }
+}
+
 const galleryBase = new BaseGallery(document.querySelector('.gallery--base') as HTMLElement);
 const galleryWebanimation = new WebAnimationGallery(document.querySelector('.gallery--webanimation') as HTMLElement);
+const galleryCustomProperties = new CustomPropertiesGallery(
+    document.querySelector('.gallery--customproperties') as HTMLElement);
