@@ -3,6 +3,7 @@ enum direction {
     previous = 'left',
 }
 
+
 class Slide {
     public constructor(public domElement: HTMLElement, private index: number) {}
 
@@ -255,26 +256,29 @@ class CustomPropertiesGallery extends BaseGallery {
     protected switchSlides(activeSlide: Slide, newSlide: Slide, directions: Array<direction>): void {
         // check window.CSS support and css-var support
         if ((window as any).CSS && CSS.supports('color', 'var(--testvar)')) {
-            // set global vars
-            this.domNode.style.setProperty('--directionCurrentSlideInitial', 'translateX(0%)');
-            this.domNode.style.setProperty('--directionCurrentSlideFinal', 'translateX(-100%)');
-            this.domNode.style.setProperty('--directionNewSlideInitial', 'translateX(100%)');
-            this.domNode.style.setProperty('--directionNewSlideFinal', 'translateX(0%)');
-
-            // step 0
-            // activeSlide.domElement.style.setProperty('transform', 'calc(--directionCurrentSlideInitial)');
-            // newSlide.domElement.style.setProperty('transform', 'calc(--directionNewSlideInitial)');
+            // define inherit base style for gallery domElement
+            this.domNode.style.setProperty('--directionCurrentSlide', 'translateX(0%)');
+            this.domNode.style.setProperty('--directionNewSlide', 'translateX(100%)');
 
             // step 1
-            // newSlide.domElement.classList.add('gallery_slide--is-following');
-            // getComputedStyle(activeSlide.domElement).setProperty('--directionCurrentSlideInitial', 'translateX(0%)');
-            // getComputedStyle(newSlide.domElement).setProperty('--directionCurrentSlideInitial', 'translateX(100%)');
+            activeSlide.domElement.style.setProperty('transform', 'var(--directionCurrentSlide)');
+            newSlide.domElement.style.setProperty('transform', 'var(--directionNewSlide)');
+            newSlide.domElement.classList.add('gallery_slide--is-following');
+
+            // Force reflow to stop browsers combining step 1 and step 2
+            this.domNode.getBoundingClientRect();
+
+            // step 2 - animate
+            this.domNode.style.setProperty('--directionCurrentSlide', 'translateX(-100%)');
+            this.domNode.style.setProperty('--directionNewSlide', 'translateX(0%)');
 
             // step 3
             // todo
         }
     }
 }
+
+// todo: cssAnimation
 
 const galleryBase = new BaseGallery(document.querySelector('.gallery--base') as HTMLElement);
 const galleryWebanimation = new WebAnimationGallery(document.querySelector('.gallery--webanimation') as HTMLElement);
