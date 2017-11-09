@@ -73,7 +73,7 @@
       transform: translateY(0%);
       transition: transform 500ms ease-in-out;
       will-change: transform;
-      background: black;
+      background: #777;
     }
 
     .gallery_slide--is-current {
