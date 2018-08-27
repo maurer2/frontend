@@ -7,6 +7,7 @@ module.exports = {
       'postcss-nesting': { preserveEmpty: true },
       'postcss-short-color': {},
       'postcss-inline-comment': {},
-      'postcss-strip-inline-comments': {}
+      'postcss-strip-inline-comments': {},
+      'postcss-preset-env': {},
     }
 };
