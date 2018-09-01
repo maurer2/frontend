@@ -1,6 +1,3 @@
-
-
-
 import './style-postcss.css';
 import { BaseGallery } from './typescript';
 

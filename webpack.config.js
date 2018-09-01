@@ -6,6 +6,8 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 module.exports = {
     entry: {
         base: './src/base/index.ts',
+        webanimations: './src/webanimations/index.ts',
+        cssvariables: './src/cssvariables/index.ts',
     },
     output: {
         filename: '[name]/main.js',
@@ -54,6 +56,22 @@ module.exports = {
             template: 'src/base/markup.html',
             hash: true,
             title: 'Base Gallery',
+        }),
+        // Webanimations Gallery
+        new HtmlWebpackPlugin({
+            filename: 'webanimations.html',
+            chunks: ['webanimations'],
+            template: 'src/webanimations/markup.html',
+            hash: true,
+            title: 'Webanimations Gallery',
+        }),
+        // CSS Variables Gallery
+        new HtmlWebpackPlugin({
+            filename: 'cssvariables.html',
+            chunks: ['cssvariables'],
+            template: 'src/cssvariables/markup.html',
+            hash: true,
+            title: 'Cssvariables Gallery',
         })
     ]
 };

@@ -4,10 +4,12 @@
     "node": ">=8.0.0"
   },
   "dependencies": {
+    "@types/es6-promise": "^3.3.0",
     "add": "^2.0.6",
     "autoprefixer": "^9.1.3",
     "clean-webpack-plugin": "^0.1.19",
     "css-loader": "^1.0.0",
+    "es6-promise": "^4.2.4",
     "html-loader": "^0.5.5",
     "html-webpack-plugin": "^3.2.0",
     "http-server": "^0.11.1",
@@ -34,6 +36,7 @@
   "license": "MIT",
   "scripts": {
     "build": "webpack --progress",
-    "serve": "npx http-server './dist/'"
+    "serve-dist": "npx http-server './dist/' -o",
+    "serve": "npx http-server -o"
   }
 }

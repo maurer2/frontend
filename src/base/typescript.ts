@@ -1,5 +1,5 @@
-import { direction } from '@app/scripts/direction';
-import { Slide } from '@app/scripts/slide';
+import { direction } from '@app/global/scripts/direction';
+import { Slide } from '@app/global/scripts/slide';
 
 export class BaseGallery {
     private static directionStrings: Array<direction> = [direction.next, direction.previous];
