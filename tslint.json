@@ -2,7 +2,7 @@
     "extends": "tslint:latest",
     "compilerOptions": {
         "allowJs": true,
-        "target": "es6"
+        "target": "es5"
     },
     "rules": {
         "max-classes-per-file": [true, 5],
