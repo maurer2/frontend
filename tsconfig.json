@@ -6,8 +6,13 @@
     "target": "es5",
     "jsx": "react",
     "allowJs": true,
+    "baseUrl": "/src",
+    "paths": {
+      "@app/*": [ "src/*" ]
+    }
   },
   "exclude": [
-    "./app/**/*.ts"
+    "./app/**/*.ts",
+    "./dist/**/*.ts"
   ]
 }
