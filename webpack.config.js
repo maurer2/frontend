@@ -2,7 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-//const CopyPlugin = require('copy-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
     entry: {
@@ -85,19 +85,11 @@ module.exports = {
             //cache: false,
         }),
         // Copy index.html to dist
-        /*
         new CopyPlugin([{
             patterns: [{
                 from: './index.html',
                 to: './dist',
             }]
         }])
-        */
     ],
-    devServer: {
-        contentBase: path.join(__dirname, 'dist'),
-        watchContentBase: true,
-        hot: true,
-        writeToDisk: true,
-    }
 };
