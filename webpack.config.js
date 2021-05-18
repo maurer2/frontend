@@ -71,7 +71,15 @@ module.exports = {
             chunks: ['cssvariables'],
             template: 'src/cssvariables/markup.html',
             hash: true,
-            title: 'Cssvariables Gallery',
+            title: 'CSS variables Gallery',
+        }),
+        // Grid Gallery
+        new HtmlWebpackPlugin({
+            filename: 'grid.html',
+            chunks: ['grid'],
+            template: 'src/grid/markup.html',
+            hash: true,
+            title: 'Grid Gallery',
         })
     ]
 };

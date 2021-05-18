@@ -14,5 +14,8 @@
   "exclude": [
     "./app/**/*.ts",
     "./dist/**/*.ts"
+  ],
+  "lib": [
+    "dom"
   ]
 }
