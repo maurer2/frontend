@@ -45,16 +45,21 @@ module.exports = {
     },
     plugins: [
         // Cleanup
-        /*
         new CleanWebpackPlugin([
             'dist',
             ], {}
         ),
-        */
+        // Copy index.html to dist
+        new CopyPlugin({
+            patterns: [{
+                from: './index.html',
+                to: './dist',
+            }]
+        }),
         // Base Gallery
         new HtmlWebpackPlugin({
             filename: 'base.html',
-            //chunks: ['base'],
+            chunks: ['base'],
             template: 'src/base/markup.html',
             hash: true,
             title: 'Base Gallery',
@@ -62,7 +67,7 @@ module.exports = {
         // Webanimations Gallery
         new HtmlWebpackPlugin({
             filename: 'webanimations.html',
-            //chunks: ['webanimations'],
+            chunks: ['webanimations'],
             template: 'src/webanimations/markup.html',
             hash: true,
             title: 'Webanimations Gallery',
@@ -70,7 +75,7 @@ module.exports = {
         // CSS Variables Gallery
         new HtmlWebpackPlugin({
             filename: 'cssvariables.html',
-            // chunks: ['cssvariables'],
+            chunks: ['cssvariables'],
             template: 'src/cssvariables/markup.html',
             hash: true,
             title: 'CSS variables Gallery',
@@ -78,18 +83,16 @@ module.exports = {
         // Grid Gallery
         new HtmlWebpackPlugin({
             filename: 'grid.html',
-            // chunks: ['grid'],
+            chunks: ['grid'],
             template: 'src/grid/markup.html',
             hash: true,
             title: 'Grid Gallery',
             //cache: false,
         }),
-        // Copy index.html to dist
-        new CopyPlugin([{
-            patterns: [{
-                from: './index.html',
-                to: './dist',
-            }]
-        }])
     ],
+    devServer: {
+        contentBase: path.join(__dirname, 'dist'),
+        compress: false,
+        writeToDisk: true,
+    },
 };
