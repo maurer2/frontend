@@ -67,6 +67,18 @@
     background: #777;
 }
 
+.gallery_slides--grid {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 100%;
+    overflow: visible;
+}
+
+.gallery_slides--grid .gallery_slide {
+    display: block;
+    background: red;
+}
+
 .gallery_slide {
     display: none;
     flex: 1;
