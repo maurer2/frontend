@@ -30,7 +30,7 @@ export class CustomPropertiesGallery extends BaseGallery {
             newSlide.domElement.classList.add('gallery_slide--is-following');
 
             // step 1.5
-            this.adjustHeight(activeSlide, newSlide);
+            super.adjustHeight(activeSlide, newSlide);
 
             // Force reflow to stop browsers combining step 1 and step 2
             this.domNode.getBoundingClientRect();
@@ -44,7 +44,7 @@ export class CustomPropertiesGallery extends BaseGallery {
             this.domNode.style.setProperty('--directionNewSlide', 'translateX(0%)');
 
             // step 3
-            this.slidesContainer.addEventListener('transitionend', (event: TransitionEvent) => {
+            (this as any).slidesContainer.addEventListener('transitionend', (event: TransitionEvent) => {
                 const transitionProperty = event.propertyName;
                 const transitionSource = event.srcElement as HTMLElement;
 
@@ -61,10 +61,10 @@ export class CustomPropertiesGallery extends BaseGallery {
                 activeSlide.domElement.className = 'gallery_slide';
 
                 // step 5
-                this.updateCounter();
+                super.updateCounter();
 
                 // step 6
-                this.updateControls();
+                super.updateControls();
             });
         }
     }

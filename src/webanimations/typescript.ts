@@ -36,7 +36,7 @@ export class WebAnimationGallery extends BaseGallery {
                 activeSlide.domElement.className = 'gallery_slide';
             })
             .then(() => {
-                this.updateCounter();
+                super.updateCounter();
             });
     }
 }
