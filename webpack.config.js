@@ -1,8 +1,6 @@
 const path = require('path');
-const fs = require('fs');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
     entry: {
@@ -49,13 +47,6 @@ module.exports = {
             'dist',
             ], {}
         ),
-        // Copy index.html to dist
-        new CopyPlugin({
-            patterns: [{
-                from: './index.html',
-                to: './dist',
-            }]
-        }),
         // Base Gallery
         new HtmlWebpackPlugin({
             filename: 'base.html',
@@ -87,8 +78,12 @@ module.exports = {
             template: 'src/grid/markup.html',
             hash: true,
             title: 'Grid Gallery',
-            //cache: false,
         }),
+        // Copy index.html to dist
+        new HtmlWebpackPlugin({
+            template: 'index.html',
+            inject: false,
+        })
     ],
     devServer: {
         contentBase: path.join(__dirname, 'dist'),
