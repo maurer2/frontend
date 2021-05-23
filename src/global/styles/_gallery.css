@@ -73,31 +73,43 @@
     grid-auto-columns: 100%;
     overflow: visible;
     transition: all 1s;
-    grid-template-columns: 100% 100% 100% 100%;
+    grid-template-areas:
+        "prev    stage    next"
+        "  .  green-room  .  ";
+    grid-template-columns: 100% 100% 100%;
+    grid-template-rows:
+        auto
+        auto;
+    position: relative;
+    left: -100%;
 }
 
 .gallery_slides--grid .gallery_slide {
     display: block;
     background: red;
-    grid-column: 1;
-    grid-row: 1;
     transition: grid-column 1s;
+    grid-area: green-room
 }
 
+.gallery_slides--grid .gallery_slide--is-current {
+    display: block;
+    flex-shrink: 0;
+    flex-basis: 100%;
+    transform: translateY(0%);
+    grid-area: stage;
+}
+
+/* temp colors */
 .gallery_slides--grid .gallery_slide + .gallery_slide {
     background: green;
-    grid-column: 2;
 }
 
 .gallery_slides--grid .gallery_slide + .gallery_slide + .gallery_slide {
     background: blue;
-    grid-column: 3;
-    transition: all 1s;
 }
 
 .gallery_slides--grid .gallery_slide + .gallery_slide + .gallery_slide + .gallery_slide {
     background: yellow;
-    grid-column: 4;
 }
 
 .gallery_slide {
