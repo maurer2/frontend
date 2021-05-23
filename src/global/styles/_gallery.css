@@ -72,9 +72,8 @@
     grid-auto-flow: column;
     grid-auto-columns: 100%;
     overflow: visible;
-    transition: all 1s;
     grid-template-areas:
-        "prev    stage    next"
+        "prev    stage   next"
         "  .  green-room  .  ";
     grid-template-columns: 100% 100% 100%;
     grid-template-rows:
@@ -82,24 +81,35 @@
         auto;
     position: relative;
     left: -100%;
+    background: none;
 }
 
+/* slide positions */
 .gallery_slides--grid .gallery_slide {
-    display: block;
-    background: red;
-    transition: grid-column 1s;
-    grid-area: green-room
+    grid-area: green-room;
+    transform: scale(0.75);
+    transition: none;
 }
 
 .gallery_slides--grid .gallery_slide--is-current {
-    display: block;
-    flex-shrink: 0;
-    flex-basis: 100%;
-    transform: translateY(0%);
     grid-area: stage;
+    transform: scale(1);
+}
+
+.gallery_slides--grid .gallery_slide--is-following {
+    grid-area: next;
+}
+
+.gallery_slides--grid .gallery_slide--is-preceding {
+    grid-area: prev;
 }
 
 /* temp colors */
+.gallery_slides--grid .gallery_slide {
+    display: block;
+    background: red;
+}
+
 .gallery_slides--grid .gallery_slide + .gallery_slide {
     background: green;
 }
@@ -110,6 +120,10 @@
 
 .gallery_slides--grid .gallery_slide + .gallery_slide + .gallery_slide + .gallery_slide {
     background: yellow;
+}
+
+.gallery_slides--grid .gallery_slide + .gallery_slide + .gallery_slide + .gallery_slide + .gallery_slide {
+    background: hotpink;
 }
 
 .gallery_slide {
